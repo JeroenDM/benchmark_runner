@@ -13,7 +13,7 @@
     <arg name="debug" default="false" />
 
     <include file="$(find setup_2_moveit_config)/launch/moveit_rviz.launch">
-        <arg name="rviz_config" value="$(find main_server)/launch/moveit.rviz"/>
+        <arg name="rviz_config" value="$(find benchmark_runner)/launch/moveit.rviz"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 

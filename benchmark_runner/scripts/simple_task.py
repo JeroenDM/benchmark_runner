@@ -250,7 +250,7 @@ if __name__ == "__main__":
     # filename = "multiple_lines.irl"
     # filename = "kingpin.irl"
     # filename = "l_profile.irl"
-    # filepath = rospack.get_path("main_server") + "/data/" + filename
+    # filepath = rospack.get_path("benchmark_runner") + "/data/" + filename
 
     filepath = rosparam.get_param("/planning_task_path")
     task = parse_file(filepath)
@@ -259,7 +259,7 @@ if __name__ == "__main__":
     show_task(plotter, task)
 
     config_file = "benchmark_config.json"
-    config_file_path = rospack.get_path("main_server") + "/data/" + config_file
+    config_file_path = rospack.get_path("benchmark_runner") + "/data/" + config_file
 
     with open(config_file_path) as file:
         config = json.load(file)

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     taskname = "pick_task_1"
 
     rospack = rospkg.RosPack()
-    pkg_path = rospack.get_path("main_server")
+    pkg_path = rospack.get_path("benchmark_runner")
     filepath = pkg_path + "/data/" + taskname + ".txt"
 
     rospy.set_param(taskname, parse_file(filepath))

@@ -69,7 +69,7 @@ class PlanningServer:
 
     def plan_pick(self, planner_id="PRM"):
         rospack = rospkg.RosPack()
-        task_file_path = rospack.get_path('main_server')
+        task_file_path = rospack.get_path('benchmark_runner')
         task_file_path += '/config/pick_and_place_task.json'
 
         task = PickTask(task_file_path)
@@ -108,7 +108,7 @@ def run_from_task_file_input(planner_type="PRM"):
     """
 
     rospack = rospkg.RosPack()
-    task_file_path = rospack.get_path('main_server')
+    task_file_path = rospack.get_path('benchmark_runner')
     task_file_path += '/config/pick_and_place_task.json'
 
     task = PickTask(task_file_path)

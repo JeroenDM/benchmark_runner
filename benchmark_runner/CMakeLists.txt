@@ -31,7 +31,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES main_server
+#  LIBRARIES benchmark_runner
 #  CATKIN_DEPENDS geometry_msgs moveit_commander rospy std_msgs
 #  DEPENDS system_lib
 )
@@ -49,7 +49,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/main_server.cpp
+#   src/${PROJECT_NAME}/benchmark_runner.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -132,7 +132,7 @@ catkin_install_python(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_main_server.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_benchmark_runner.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <rosparam file="$(find main_server)/data/benchmark_1.yaml" />
-    <node name="benchmark_example" pkg="main_server" type="run_benchmark.py" output="screen"/>
+    <rosparam file="$(find benchmark_runner)/data/benchmark_1.yaml" />
+    <node name="benchmark_example" pkg="benchmark_runner" type="run_benchmark.py" output="screen"/>
 </launch>
