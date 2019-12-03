@@ -1,0 +1,9 @@
+variables
+config home 0 -1.5708 1.5708 0 0 0
+pose p1 1.23 -0.2 0.5 0 1 0 0
+pose p2 1.23 0.2 0.5 0 1 0 0
+
+commands
+movep p1
+movel p2
+movej home

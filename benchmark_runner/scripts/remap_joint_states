@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+import rospy
+from sensor_msgs.msg import JointState
+from moveit_msgs.msg import DisplayRobotState
+
+rospy.init_node("remapper")
+
+joint_states = rospy.Publisher(
+    "/visual_nodes/joint_states", JointState, queue_size=10)
+
+
+def remap(data):
+    if not rospy.is_shutdown():
+        joint_states.publish(data.state.joint_state)
+
+
+subs = rospy.Subscriber(
+    "display_robot_state", DisplayRobotState, remap)
+
+rospy.spin()

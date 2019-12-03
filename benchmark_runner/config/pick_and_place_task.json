@@ -1,0 +1,88 @@
+{
+    "basic_info": {
+        "n_steps": 4,
+        "manip": "manipulator",
+        "start_fixed": true
+    },
+    "costs": [
+        {
+            "type": "joint_vel",
+            "params": {
+                "targets": [
+                    0
+                ],
+                "coeffs": [
+                    1
+                ]
+            }
+        },
+        {
+            "type": "collision",
+            "params": {
+                "coeffs": [
+                    20
+                ],
+                "dist_pen": [
+                    0.025
+                ],
+                "continuous": false
+            }
+        }
+    ],
+    "constraints": [
+        {
+            "name": "pick_pose",
+            "type": "cart_pose",
+            "params": {
+                "xyz": [
+                    0.067636,
+                    -0.60062,
+                    0.15
+                ],
+                "wxyz": [
+                    0.094215,
+                    0.99555,
+                    0.00033118,
+                    9.9214e-5
+                ],
+                "link": "tool_tip",
+                "timestep": 1
+            }
+        },
+        {
+            "name": "drop_position",
+            "type": "joint_pos",
+            "params": {
+                "vals": [
+                    -0.4426,
+                    1.1686,
+                    0,
+                    -0.7752,
+                    0,
+                    1.3074,
+                    0
+                ]
+            },
+            "timestep": 2
+        },
+        {
+            "name": "home_position",
+            "type": "joint_pos",
+            "params": {
+                "vals": [
+                    0,
+                    0,
+                    0,
+                    -1.5388,
+                    0,
+                    1.3074,
+                    0
+                ]
+            },
+            "timestep": 3
+        }
+    ],
+    "init_info": {
+        "type": "fixed"
+    }
+}

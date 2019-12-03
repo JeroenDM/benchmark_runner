@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import rospy
+import tf
+
+if __name__ == '__main__':
+    rospy.init_node('pick_dummy', anonymous=True)
+    br = tf.TransformBroadcaster()
+    rate = rospy.Rate(1.0)
+
+    pick_pos = (0.067636, -0.60062, 0.15)
+    pick_ori = (0.99555, 0.00033118, 9.9214e-5, 0.094215)
+
+    while not rospy.is_shutdown():
+        print('Publishing picking pose')
+        br.sendTransform(pick_pos,
+                         pick_ori,
+                         rospy.Time.now(),
+                         "/pick_pose_1",
+                         "/world")
+        rate.sleep()

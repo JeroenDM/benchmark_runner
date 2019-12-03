@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+
+    <include file="$(find main_server)/launch/setup_connection.launch"/>
+
+    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+    <include file="$(find setup_2_moveit_config)/launch/planning_context.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <!-- Publish the joint state published by the remap_joint_states node launched later in this file. -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="false"/>
+        <param name="robot_description" command="xacro  '$(find setup_2_support)/urdf/setup_2.xacro'"/>
+        <rosparam param="source_list">[/visual_nodes/joint_states]</rosparam>
+    </node>
+
+      <!-- Given the published joint states, publish tf for the robot links -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+
+      <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
+    <include file="$(find setup_2_moveit_config)/launch/move_group.launch">
+        <arg name="allow_trajectory_execution" value="true"/>
+        <arg name="fake_execution" value="true"/>
+        <arg name="info" value="true"/>
+        <arg name="debug" value="true"/>
+        <arg name="pipeline" value="ompl"/>
+    </include>
+    
+    <remap from="/visual_node/display_robot_state" to="display_robot_state" />
+
+    <node name="remap_joint_states" pkg="main_server" type="remap_joint_states"/>
+
+    <node name="visual_node" pkg="main_server" type="visual_node" output="screen"/>
+</launch>

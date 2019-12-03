@@ -1,0 +1,15 @@
+pick_task_1:
+  variables: {
+      home: [0, 0, 0, 0, 0, 0],
+      drop: [-1.2949, 0.2661, 0, -1.6083, 0, 1.2149, 0],
+      pick:
+      {
+        xyz: [0.067636, -0.60062, 0.15 ],
+        xyzw: [0.99555, 0.00033118, 9.9214e-5, 0.094215]
+      }
+    }
+  commands: [
+    {type: movep, goal: "pick"},
+    {type: movej, goal: "drop"},
+    {type: movej, goal: "home"}
+  ]
