@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node name="basic_controls" pkg="interactive_marker_tutorials" type="basic_controls" output="screen"/>
-    <node name="basic_controls_proxy" pkg="interactive_marker_proxy" type="proxy" args="topic_ns:=/basic_controls target_frame:=/rotating_frame">
-    <!-- <node name="interactive_marker_test" pkg="benchmark_runner" type="interactive_marker" output="screen"/> -->
-    <!-- <node name="basic_controls_proxy" pkg="interactive_marker_proxy" type="proxy" args="topic_ns:=/basic_controls target_frame:=/rotating_frame"> -->
-    </node>
-
-</launch>

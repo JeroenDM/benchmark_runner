@@ -11,7 +11,6 @@ import rospkg
 import rosparam
 import moveit_commander
 import urdfpy
-import nexon.io
 
 from geometry_msgs.msg import Vector3, Quaternion, Pose, PoseStamped
 

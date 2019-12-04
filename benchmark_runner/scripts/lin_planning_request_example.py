@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import rospy
-import rospkg
 from geometry_msgs.msg import Pose, Vector3, Quaternion
 from nexon_msgs.msg import PoseConstraint
 from nexon_msgs.srv import LINPlanning, LINPlanningRequest

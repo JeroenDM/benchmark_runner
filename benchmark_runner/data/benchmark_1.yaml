@@ -1,4 +1,0 @@
-benchmark_planners: [
-  {planning_service_name: "planning_request", planner_name: "PRM"},
-  {planning_service_name: "planning_request", planner_name: "RRTConnect"}
-]

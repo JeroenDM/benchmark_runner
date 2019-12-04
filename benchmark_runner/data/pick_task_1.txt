@@ -1,9 +1,0 @@
-variables
-config home 0 0 0 0 0 0
-config drop -1.2949 0.2661 0 -1.6083 0 1.2149 0
-pose pick 0.067636 -0.60062 0.15 0.99555 0.00033118 9.9214e-5 0.094215
-
-commands
-movep pick
-movej drop
-movej home
