@@ -3,18 +3,19 @@
         "ompl_ptp_planning"
     ],
     "cart_services": [
+        "ompl_lin_planning",
         "arf_cart_planning"
     ],
-    "groups": [
+    "groups": {
+        "group_1":
         {
-            "name": "group_1",
             "ptp_service": "ompl_ptp_planning",
             "cart_service": "ompl_lin_planning"
         },
+        "group_2":
         {
-            "name": "group_2",
             "ptp_service": "ompl_ptp_planning",
             "cart_service": "arf_cart_planning"
         }
-    ]
+    }
 }

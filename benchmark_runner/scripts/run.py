@@ -5,7 +5,6 @@ This file loads the "simple_line.txt" planning tasks,
 and then executes it.
 """
 import sys
-import copy
 import json
 import git
 import rospy
@@ -239,6 +238,12 @@ def log_run_to_db(task, filepath):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("One argument required:")
+        print("rosrun benchmark_runner run.py <planning_group_name>")
+        exit()
+    else:
+        planning_group_name = sys.argv[1]
 
     rospy.init_node("execute_simple_task")
     rospack = rospkg.RosPack()
@@ -258,14 +263,14 @@ if __name__ == "__main__":
     plotter = Plotter(ref_frame="/world")
     show_task(plotter, task)
 
-    config_file = "benchmark_config.json"
-    config_file_path = rospack.get_path("benchmark_runner") + "/data/" + config_file
+    config_file = "planning_groups.json"
+    config_file_path = rospack.get_path("benchmark_runner") + "/config/"
 
-    with open(config_file_path) as file:
+    with open(config_file_path + config_file) as file:
         config = json.load(file)
 
-    group_config = config["groups"][1]
-    print("Using planning group: {}".format(group_config["name"]))
+    group_config = config["groups"][planning_group_name]
+    print("Using planning group: {}".format(planning_group_name))
     psi = PlanningServersInterface(group_config)
 
     # psi = PlanningServersInterface(config_file_path)

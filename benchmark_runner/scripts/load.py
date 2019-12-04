@@ -94,11 +94,11 @@ def list_work_objects(package_name):
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Two argument required:")
-        print("<package_name> <work_name>:\tpublish urdf file <work_name>.urdf.")
-        print("<package_name> -l:\tlist available work objects.")
+        print("<setup_name> <work_name>:\tpublish urdf file <work_name>.urdf.")
+        print("<setup_name> -l:\tlist available work objects.")
         exit()
     else:
-        package_name = sys.argv[1]
+        package_name = sys.argv[1] + "_support"
         command = sys.argv[2]
         if command == "-l":
             list_work_objects(package_name)
