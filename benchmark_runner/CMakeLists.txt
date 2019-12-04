@@ -91,13 +91,13 @@ target_link_libraries(${PROJECT_NAME}_visual_node
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-catkin_install_python(
-  PROGRAMS
-  scripts/pick_and_place_task
-  scripts/pickit_dummy
+# catkin_install_python(
+#   PROGRAMS
+#   scripts/pick_and_place_task
+#   scripts/pickit_dummy
 
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html

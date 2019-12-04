@@ -1,3 +1,6 @@
+/** ROS Service to visualize solutions in rviz
+ * by publishing a joint path on a robot state topic.
+ * */
 #include <string>
 
 // ROS
