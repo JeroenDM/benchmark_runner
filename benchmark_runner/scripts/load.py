@@ -31,10 +31,7 @@ def numpy_to_pose(arr):
     trans = transformations.translation_from_matrix(arr)
     quat = transformations.quaternion_from_matrix(arr)
 
-    return Pose(
-        position=Vector3(*trans),
-        orientation=Quaternion(*quat)
-    )
+    return Pose(position=Vector3(*trans), orientation=Quaternion(*quat))
 
 
 def remove_all_objects(scene):
@@ -43,42 +40,91 @@ def remove_all_objects(scene):
 
 
 def parse_file(package_name, work_name):
+    """ Convert urdf file (xml) to python dict.
+
+    Using the urdfpy package for now.
+    Using the xml package from the standard library could be
+    easier to understand. We can change this in the future
+    if it becomes a mess.
+    """
     rospack = rospkg.RosPack()
 
     filepath = rospack.get_path(package_name)
     filepath += REL_WORK_PATH
-    filepath += work_name + ".urdf"
 
-    return urdfpy.URDF.load(filepath)
+    urdf = urdfpy.URDF.load(filepath + work_name + ".urdf")
 
+    d = {"links": {}, "joints": {}}
 
-def parse_link(link):
-    """ Assume a link has only a single collision object.
-        Assume this collision object is a box.
-        Assume the link named "world" has no collision objects.
-    """
-    assert len(link.collisions) == 1
-    assert link.collisions[0].geometry.box is not None
-    assert link.name != "world"
-    return link.collisions[0].geometry.box.size
-
-
-def publish_parsed_urdf(parsed_urdf, scene):
-    links = {}
-    for link in parsed_urdf.links:
-        if link.name == "world":
+    for link in urdf.links:
+        if link.name == "world" or link.name == "work":
             continue
         else:
-            links[link.name] = {"size": parse_link(link)}
+            d["links"][link.name] = parse_link(link, filepath)
 
-    for joint in parsed_urdf.joints:
+    for joint in urdf.joints:
         p = PoseStamped()
         p.header.frame_id = joint.parent
         p.pose = numpy_to_pose(joint.origin)
-        scene.add_box(joint.child, p, links[joint.child]["size"])
+
+        d["joints"][joint.name] = {
+            "pose": p,
+            "parent": joint.parent,
+            "child": joint.child
+        }
+    return d
+
+
+def parse_link(link, mesh_path):
+    """ Assume a link has only a single collision object.
+        Assume this collision object is a box.
+        Assume the link named "world" has no collision objects.
+
+    link: a urdfpy.urdf.Link object
+    mesh_path: absolute path of the folder where we have to fine the stl files
+    """
+    assert len(link.collisions) == 1
+    assert link.name != "world"
+    assert link.name != "work"
+    collision = link.collisions[0]
+    if collision.geometry.box is not None:
+        data = {"type": "box", "size": link.collisions[0].geometry.box.size}
+    elif collision.geometry.mesh is not None:
+        data = {
+            "type": "mesh",
+            "filename": mesh_path + collision.geometry.mesh.filename,
+            "scale": collision.geometry.mesh.scale
+        }
+    else:
+        raise Exception("No mesh of box collision geometry found.")
+
+    return data
+
+
+def publish_parsed_urdf(parsed_urdf, scene):
+    """ Publish link geometry for every joint's child. """
+    for name, joint in parsed_urdf["joints"].items():
+        # get the child link data
+        link = parsed_urdf["links"][joint["child"]]
+
+        # publish the child links collision geometry
+        if link["type"] == "box":
+            scene.add_box(
+                joint["child"],
+                joint["pose"],
+                link["size"]
+            )
+        else:
+            scene.add_mesh(
+                joint["child"],
+                joint["pose"],
+                link["filename"],
+                link["scale"]
+            )
 
 
 def list_work_objects(package_name):
+    """ Look for files in the support package tasks folder. """
     import glob
     rospack = rospkg.RosPack()
 
