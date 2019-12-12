@@ -75,29 +75,6 @@ class PlanningServersInterface:
     """
     Call the appropriate service depending on the planning commands.
     """
-    DEFAULT_PLANNER = "RRTConnect"
-    # PTP_SERVICE_NAME = "ompl_ptp_planning"
-    # LIN_SERVICE_NAME = "ompl_lin_planning"
-    # LIN_SERVICE_NAME = "desc_lin_planning"
-
-    # def __init__(self, config_file_path):
-    #     try:
-    #         with open(config_file_path) as file:
-    #             config = json.load(file)
-    #             self.PTP_SERVICE_NAME = config["ptp_services"][0]
-    #             self.LIN_SERVICE_NAME = config["cart_services"][0]
-    #             # self.cart_servers = LINServices(config["cart_services"])
-    #             rospy.loginfo("Read configuration file:")
-    #             rospy.loginfo(str(config))
-    #     except:
-    #         rospy.loginfo("No config file found, using default values")
-    #         rospy.loginfo("Supplied path was: {}".format(config_file_path))
-
-    #     rospy.wait_for_service(self.PTP_SERVICE_NAME, timeout=5.0)
-    #     self.ptp = rospy.ServiceProxy(self.PTP_SERVICE_NAME, PTPPlanning)
-    #     rospy.wait_for_service(self.LIN_SERVICE_NAME, timeout=5.0)
-    #     self.lin = rospy.ServiceProxy(self.LIN_SERVICE_NAME, LINPlanning)
-    #     self.logs = []
 
     def __init__(self, config):
         rospy.wait_for_service(config["ptp_service"], timeout=5.0)
@@ -110,7 +87,6 @@ class PlanningServersInterface:
     def movej(self, start_config, joint_values):
         req = PTPPlanningRequest()
         req.joint_goal = joint_values
-        req.planner = self.DEFAULT_PLANNER
         req.start_config = start_config
 
         resp = self.ptp(req)
@@ -123,7 +99,6 @@ class PlanningServersInterface:
     def movep(self, start_config, pose_goal):
         req = PTPPlanningRequest()
         req.pose_goal = pose_goal
-        req.planner = self.DEFAULT_PLANNER
         req.start_config = start_config
 
         resp = self.ptp(req)
@@ -151,10 +126,12 @@ class PlanningServersInterface:
 def show_task(plotter, task):
     variables = task[Sections.VARS]
     for v in variables:
-        # print(v, variables[v])
+        print(v, variables[v])
         try:
             plotter.plot_axis(create_pose_msg(variables[v]))
         except:
+            # TODO bad style, a bare except statement.
+            # change task data structure to fix this
             continue
 
 
@@ -260,7 +237,8 @@ if __name__ == "__main__":
     filepath = rosparam.get_param("/planning_task_path")
     task = parse_file(filepath)
 
-    plotter = Plotter(ref_frame="/world")
+    # plotter = Plotter(ref_frame="/world")
+    plotter = Plotter(ref_frame="/work")
     show_task(plotter, task)
 
     config_file = "planning_groups.json"
@@ -272,8 +250,6 @@ if __name__ == "__main__":
     group_config = config["groups"][planning_group_name]
     print("Using planning group: {}".format(planning_group_name))
     psi = PlanningServersInterface(group_config)
-
-    # psi = PlanningServersInterface(config_file_path)
 
     plans = plan_task(psi, task)
 
