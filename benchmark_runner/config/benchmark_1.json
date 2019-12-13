@@ -1,0 +1,39 @@
+{
+    "groups": {
+        "group_1": {
+            "ptp_service": "ompl_ptp_planning",
+            "cart_service": "ompl_lin_planning",
+            "ptp_config": {
+                "planner_id": "RRTConnect",
+                "planning_time": 5.0,
+                "longest_valid_segment_fraction": 0.001
+            },
+            "cart_config": {
+                "eef_step": 0.1,
+                "jump_threshold": 0.0
+            },
+            "num_runs": 1
+        },
+        "group_2": {
+            "ptp_service": "ompl_ptp_planning",
+            "cart_service": "arf_cart_planning",
+            "ptp_config": {
+                "planner_id": "RRTConnect",
+                "planning_time": 5.0,
+                "longest_valid_segment_fraction": 0.001
+            },
+            "cart_config": {
+                "num_samples": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "rx": 0,
+                    "ry": 0,
+                    "rz": 30
+                },
+                "num_path_points": 10
+            },
+            "num_runs": 1
+        }
+    }
+}

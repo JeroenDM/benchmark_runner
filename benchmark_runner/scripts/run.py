@@ -6,121 +6,17 @@ and then executes it.
 """
 import sys
 import json
-import git
 import rospy
 import rospkg
 import rosparam
-import moveit_msgs.msg
-import geometry_msgs.msg
-import datetime
-import functools
 
-from nexon.io import parse_file, LogDB
+from nexon.io import parse_file
 from nexon.robot import Robot
-from nexon.interface import Commands, Sections
-from nexon_msgs.srv import PTPPlanning, PTPPlanningRequest
-from nexon_msgs.srv import LINPlanning, LINPlanningRequest
 from nexon.util import Plotter
+from nexon.interface import Sections
 
-
-def create_pose_msg(goal):
-    xyz, xyzw = goal["xyz"], goal["xyzw"]
-    p = geometry_msgs.msg.Pose()
-    p.position.x = xyz[0]
-    p.position.y = xyz[1]
-    p.position.z = xyz[2]
-    p.orientation.x = xyzw[0]
-    p.orientation.y = xyzw[1]
-    p.orientation.z = xyzw[2]
-    p.orientation.w = xyzw[3]
-    return p
-
-
-def points_to_plan(points):
-    plan = moveit_msgs.msg.RobotTrajectory()
-    plan.joint_trajectory.points = points
-    for pt in plan.joint_trajectory.points:
-        pt.velocities = []
-        pt.accelerations = []
-    plan.joint_trajectory.header.frame_id = "world"
-    plan.joint_trajectory.joint_names = [
-        "joint_a1", "joint_a2", "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
-    return plan
-
-
-def log_motion_command(func):
-    """ Decorator to log movel, movep and movej commands to database. """
-
-    @functools.wraps(func)  # make debugging easier
-    def wrapper(self, start_config, pose_goal):
-        self.logs.append("Logging motion command")
-        return func(self, start_config, pose_goal)
-
-    return wrapper
-
-
-class LINServices:
-    timeout = 5.0
-
-    def __init__(self, service_names):
-        self.names = service_names
-        self.s = [self._create_proxy(name) for name in self.names]
-
-    def _create_proxy(self, service_name):
-        rospy.wait_for_service(service_name, timeout=self.__class__.timeout)
-        return rospy.ServiceProxy(service_name, LINPlanning)
-
-
-class PlanningServersInterface:
-    """
-    Call the appropriate service depending on the planning commands.
-    """
-
-    def __init__(self, config):
-        rospy.wait_for_service(config["ptp_service"], timeout=5.0)
-        self.ptp = rospy.ServiceProxy(config["ptp_service"], PTPPlanning)
-        rospy.wait_for_service(config["cart_service"], timeout=5.0)
-        self.lin = rospy.ServiceProxy(config["cart_service"], LINPlanning)
-        self.logs = []
-
-    @log_motion_command
-    def movej(self, start_config, joint_values):
-        req = PTPPlanningRequest()
-        req.joint_goal = joint_values
-        req.start_config = start_config
-
-        resp = self.ptp(req)
-        if not resp.success:
-            raise Exception("Movej command failed.")
-
-        return points_to_plan(resp.joint_path)
-
-    @log_motion_command
-    def movep(self, start_config, pose_goal):
-        req = PTPPlanningRequest()
-        req.pose_goal = pose_goal
-        req.start_config = start_config
-
-        resp = self.ptp(req)
-        if not resp.success:
-            raise Exception("Movej command failed.")
-
-        return points_to_plan(resp.joint_path)
-
-    @log_motion_command
-    def movel(self, start_config, pose_goal):
-        req = LINPlanningRequest()
-        req.start_config = start_config
-        req.pose_goal = pose_goal
-        req.has_constraints = False
-
-        resp = self.lin(req)
-        # resp = self.cart_servers.s[0](req)
-
-        if not resp.success:
-            raise Exception("Movel command failed.")
-
-        return points_to_plan(resp.joint_path)
+from benchmark_runner.planner_interface import PlannerInterface
+from benchmark_runner.task_runner import create_pose_msg, plan_task
 
 
 def show_task(plotter, task):
@@ -133,42 +29,6 @@ def show_task(plotter, task):
             # TODO bad style, a bare except statement.
             # change task data structure to fix this
             continue
-
-
-def plan_task(psi, task):
-    # fixed assumption, the robot starts from home
-    initial_config = task[Sections.VARS]["home"]
-
-    plans = []
-    var = task[Sections.VARS]
-
-    for command in task[Sections.COMMANDS]:
-        # what is the inital configuration for the current planning command?
-        if len(plans) == 0:
-            start_config = initial_config
-        else:
-            start_config = plans[-1].joint_trajectory.points[-1].positions
-
-        ctype = command["type"]
-        if ctype == Commands.MOVEJ:
-            plan = psi.movej(start_config, var[command["goal"]])
-            plans.append(plan)
-
-        elif ctype == Commands.MOVEP:
-            plan = psi.movep(
-                start_config, create_pose_msg(var[command["goal"]]))
-            plans.append(plan)
-
-        elif ctype == Commands.MOVELIN:
-            plan = psi.movel(
-                start_config, create_pose_msg(var[command["goal"]]))
-            plans.append(plan)
-
-        else:
-            raise Exception(
-                "Unkown command type: {}".format(ctype))
-
-    return plans
 
 
 def execute_plans(robot, plans):
@@ -195,23 +55,6 @@ def execute_plans(robot, plans):
         # print(plan)
         robot.mg.execute(plan, wait=True)
         rospy.sleep(1.0)
-
-
-def log_run_to_db(task, filepath):
-    # git the git commit hash
-    repo = git.Repo(search_parent_directories=True)
-
-    db_data = {
-        "author": "JeroenDM",
-        "date": datetime.datetime.utcnow(),
-        "filename": filepath,
-        "git": {
-            "branch": repo.active_branch.name,
-            "sha": repo.head.object.hexsha
-        }
-    }
-
-    DB.add_data(db_data)
 
 
 if __name__ == "__main__":
@@ -249,7 +92,7 @@ if __name__ == "__main__":
 
     group_config = config["groups"][planning_group_name]
     print("Using planning group: {}".format(planning_group_name))
-    psi = PlanningServersInterface(group_config)
+    psi = PlannerInterface(group_config)
 
     plans = plan_task(psi, task)
 
