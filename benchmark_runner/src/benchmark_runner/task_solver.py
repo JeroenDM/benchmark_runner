@@ -4,6 +4,16 @@ Functions to execute a planning task.
 import geometry_msgs.msg
 
 from nexon.interface import Commands, Sections
+from nexon.io import parse_file
+
+from benchmark_runner.planner_interface import PlannerInterface
+
+
+def solve_task(task_file_path, config):
+    task = parse_file(task_file_path)
+    pi = PlannerInterface(config)
+
+    return plan_task(pi, task)
 
 
 def create_pose_msg(goal):

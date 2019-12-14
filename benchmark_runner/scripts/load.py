@@ -14,6 +14,11 @@ import urdfpy
 
 from geometry_msgs.msg import Vector3, Quaternion, Pose, PoseStamped
 
+from nexon.util import Plotter
+from nexon.io import parse_file
+from nexon.interface import Sections
+from benchmark_runner.task_solver import create_pose_msg
+
 # This convention should stay relatively constant
 REL_WORK_PATH = "/urdf/work/"
 REL_TASK_PATH = "/tasks/"
@@ -39,7 +44,7 @@ def remove_all_objects(scene):
         scene.remove_world_object(name)
 
 
-def parse_file(package_name, work_name):
+def parse_urdf_file(package_name, work_name):
     """ Convert urdf file (xml) to python dict.
 
     Using the urdfpy package for now.
@@ -136,6 +141,27 @@ def list_work_objects(package_name):
         print("\t" + file.replace(filepath, "").replace(".urdf", ""))
 
 
+def is_pose(variable):
+    """ Check if a variable is a reference frame pose.
+    TODO should be an attribute or something.
+    """
+    if isinstance(variable, dict):
+        if "xyz" in variable:
+            return True
+    return False
+
+
+def show_task(plotter, task):
+    """
+    Publish reference frames for all poses defined in the task file.
+    """
+    variables = task[Sections.VARS]
+    for v in variables:
+        print(v, variables[v])
+        if is_pose(variables[v]):
+            plotter.plot_axis(create_pose_msg(variables[v]))
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Two argument required:")
@@ -158,7 +184,7 @@ if __name__ == "__main__":
 
     remove_all_objects(scene)
 
-    work = parse_file(package_name, work_name)
+    work = parse_urdf_file(package_name, work_name)
     publish_parsed_urdf(work, scene)
 
     # parse and load task to parameter server
@@ -166,5 +192,10 @@ if __name__ == "__main__":
     filename = work_name + ".irl"
     task_path = rospack.get_path(package_name) + REL_TASK_PATH + filename
     rosparam.set_param("/planning_task_path", task_path)
+
+    task = parse_file(task_path)
+    plotter = Plotter(ref_frame="/world")
+    # plotter = Plotter(ref_frame="/work") # TODO fix setup 3
+    show_task(plotter, task)
 
     print("Done!")

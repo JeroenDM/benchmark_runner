@@ -1,37 +1,25 @@
 #!/usr/bin/env python
 """
-Basic planning execution.
-This file loads the "simple_line.txt" planning tasks,
-and then executes it.
+This script runs a task.
+It takes as a command line argument the planner group it has to use.
+The task is read from the parameter server for now
+(parameter: '/planning_task_path').
 """
 import sys
 import json
+
 import rospy
 import rospkg
 import rosparam
 
-from nexon.io import parse_file
 from nexon.robot import Robot
-from nexon.util import Plotter
-from nexon.interface import Sections
-
-from benchmark_runner.planner_interface import PlannerInterface
-from benchmark_runner.task_runner import create_pose_msg, plan_task
-
-
-def show_task(plotter, task):
-    variables = task[Sections.VARS]
-    for v in variables:
-        print(v, variables[v])
-        try:
-            plotter.plot_axis(create_pose_msg(variables[v]))
-        except:
-            # TODO bad style, a bare except statement.
-            # change task data structure to fix this
-            continue
+from benchmark_runner.task_solver import solve_task
 
 
 def execute_plans(robot, plans):
+    """
+    Execute a list of plans, this list is returned when solving a task.
+    """
     # make sure the robot is actually in the home position
     # before executing a plan
     robot.mg.set_joint_value_target(
@@ -71,18 +59,7 @@ if __name__ == "__main__":
     # Open a connection to database for logging
     # DB = LogDB()
 
-    # filename = "simple_line.irl"
-    # filename = "multiple_lines.irl"
-    # filename = "kingpin.irl"
-    # filename = "l_profile.irl"
-    # filepath = rospack.get_path("benchmark_runner") + "/data/" + filename
-
     filepath = rosparam.get_param("/planning_task_path")
-    task = parse_file(filepath)
-
-    # plotter = Plotter(ref_frame="/world")
-    plotter = Plotter(ref_frame="/work")
-    show_task(plotter, task)
 
     config_file = "planning_groups.json"
     config_file_path = rospack.get_path("benchmark_runner") + "/config/"
@@ -92,9 +69,8 @@ if __name__ == "__main__":
 
     group_config = config["groups"][planning_group_name]
     print("Using planning group: {}".format(planning_group_name))
-    psi = PlannerInterface(group_config)
 
-    plans = plan_task(psi, task)
+    plans = solve_task(filepath, group_config)
 
     print("LOGGING ===========================")
     # print(psi.logs)
