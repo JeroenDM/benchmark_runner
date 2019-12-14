@@ -7,15 +7,15 @@
         "arf_cart_planning"
     ],
     "groups": {
-        "group_1":
-        {
+        "group_1": {
             "ptp_service": "ompl_ptp_planning",
-            "cart_service": "ompl_lin_planning"
+            "cart_service": "ompl_lin_planning",
+            "sample_service": "arf_sample_constraint"
         },
-        "group_2":
-        {
+        "group_2": {
             "ptp_service": "ompl_ptp_planning",
-            "cart_service": "arf_cart_planning"
+            "cart_service": "arf_cart_planning",
+            "sample_service": "arf_sample_constraint"
         }
     }
 }
