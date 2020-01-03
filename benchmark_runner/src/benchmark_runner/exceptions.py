@@ -1,0 +1,2 @@
+class PlanningFailedError(RuntimeError):
+    pass

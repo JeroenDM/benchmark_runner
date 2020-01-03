@@ -1,11 +1,13 @@
 import rospy
 import moveit_msgs.msg
+import trajectory_msgs.msg
 
 from nexon_msgs.srv import PTPPlanning, PTPPlanningRequest
-from nexon_msgs.srv import LINPlanning, LINPlanningRequest
+from nexon_msgs.srv import LINPlanning, LINPlanningRequest, LINPlanningResponse
 from nexon_msgs.srv import SampleConstraint, SampleConstraintRequest
 
 from benchmark_runner.logging import log_motion_command
+from benchmark_runner.exceptions import PlanningFailedError
 
 """
 Class that defines interface to execute low-level planning request
@@ -28,6 +30,9 @@ def points_to_plan(points):
         pt.velocities = []
         pt.accelerations = []
     plan.joint_trajectory.header.frame_id = "world"
+    # plan.joint_trajectory.joint_names = [
+    #     "rail_base_to_carrier", "joint_a1", "joint_a2",
+    # "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
     plan.joint_trajectory.joint_names = [
         "joint_a1", "joint_a2", "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
     return plan
@@ -56,7 +61,7 @@ class PlannerInterface:
 
         resp = self.ptp(req)
         if not resp.success:
-            raise Exception("Movej command failed.")
+            raise PlanningFailedError("Movej command failed.")
 
         return points_to_plan(resp.joint_path)
 
@@ -68,7 +73,7 @@ class PlannerInterface:
 
         resp = self.ptp(req)
         if not resp.success:
-            raise Exception("Movej command failed.")
+            raise PlanningFailedError("Movep command failed.")
 
         return points_to_plan(resp.joint_path)
 
@@ -79,11 +84,15 @@ class PlannerInterface:
         req.pose_goal = pose_goal
         req.has_constraints = False
 
-        resp = self.lin(req)
+        resp = LINPlanningResponse(success=False)
+        try:
+            resp = self.lin(req)
+        except rospy.service.ServiceException as e:
+            print(e)
         # resp = self.cart_servers.s[0](req)
 
         if not resp.success:
-            raise Exception("Movel command failed.")
+            raise PlanningFailedError("Movel command failed.")
 
         return points_to_plan(resp.joint_path)
 
@@ -95,6 +104,6 @@ class PlannerInterface:
         resp = self.sample(req)
 
         if not resp.success:
-            raise Exception("Sampling constraint failed.")
+            raise PlanningFailedError("Sampling command failed.")
 
         return resp
