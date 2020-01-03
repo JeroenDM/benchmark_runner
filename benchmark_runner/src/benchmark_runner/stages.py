@@ -1,11 +1,22 @@
 
+class Container:
+    def __init__(self, stages):
+        self.stages = stages
+        self.planning_graph = []
+
+    def shedule(self):
+        pass
+
 
 class Stage(object):
-    pass
+    def __init__(self):
+        self.left_nb = None
+        self.right_nb = None
 
 
 class Generator(Stage):
-    pass
+    def __init__(self):
+        pass
 
 
 class Propagator(Stage):
