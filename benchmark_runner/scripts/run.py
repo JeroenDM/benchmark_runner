@@ -70,11 +70,20 @@ if __name__ == "__main__":
     group_config = config["groups"][planning_group_name]
     print("Using planning group: {}".format(planning_group_name))
 
+    # load parameters to parameter server
+    ptp_config = config["groups"][planning_group_name]["ptp_config"]
+    print(ptp_config)
+    rospy.set_param("/ptp_config", ptp_config)
+
+    cart_config = config["groups"][planning_group_name]["cart_config"]
+    print(cart_config)
+    rospy.set_param("/cart_config", cart_config)
+
     plans = solve_task(filepath, group_config)
 
-    print("LOGGING ===========================")
-    # print(psi.logs)
-    # log_run_to_db(task, filepath)
+    # print("LOGGING ===========================")
+    # # print(psi.logs)
+    # # log_run_to_db(task, filepath)
 
-    robot = Robot()
-    execute_plans(robot, plans)
+    # robot = Robot()
+    # execute_plans(robot, plans)

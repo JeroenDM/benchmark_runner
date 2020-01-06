@@ -10,7 +10,16 @@
         "group_1": {
             "ptp_service": "ompl_ptp_planning",
             "cart_service": "ompl_lin_planning",
-            "sample_service": "arf_sample_constraint"
+            "sample_service": "arf_sample_constraint",
+            "ptp_config": {
+                "planner_id": "RRTConnect",
+                "planning_time": 6.0,
+                "longest_valid_segment_fraction": 0.001
+            },
+            "cart_config": {
+                "eef_step": 0.02,
+                "jump_threshold": 0.0
+            }
         },
         "group_2": {
             "ptp_service": "ompl_ptp_planning",
