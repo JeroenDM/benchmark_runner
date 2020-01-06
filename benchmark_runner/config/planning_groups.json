@@ -17,7 +17,7 @@
                 "longest_valid_segment_fraction": 0.001
             },
             "cart_config": {
-                "eef_step": 0.02,
+                "eef_step": 0.01,
                 "jump_threshold": 0.0
             }
         },

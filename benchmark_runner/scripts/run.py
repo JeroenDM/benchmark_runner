@@ -85,5 +85,5 @@ if __name__ == "__main__":
     # # print(psi.logs)
     # # log_run_to_db(task, filepath)
 
-    # robot = Robot()
-    # execute_plans(robot, plans)
+    robot = Robot()
+    execute_plans(robot, plans)

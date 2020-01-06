@@ -48,9 +48,9 @@ class PlannerInterface:
         self.ptp = rospy.ServiceProxy(config["ptp_service"], PTPPlanning)
         rospy.wait_for_service(config["cart_service"], timeout=5.0)
         self.lin = rospy.ServiceProxy(config["cart_service"], LINPlanning)
-        rospy.wait_for_service(config["sample_service"], timeout=5.0)
-        self.sample = rospy.ServiceProxy(
-            config["sample_service"], SampleConstraint)
+        # rospy.wait_for_service(config["sample_service"], timeout=5.0)
+        # self.sample = rospy.ServiceProxy(
+        #     config["sample_service"], SampleConstraint)
         self.logs = []
 
     @log_motion_command
@@ -96,14 +96,14 @@ class PlannerInterface:
 
         return points_to_plan(resp.joint_path)
 
-    def sample(self, pose, constraint):
-        req = SampleConstraintRequest()
-        req.pose = pose
-        req.constraint = constraint
+    # def sample(self, pose, constraint):
+    #     req = SampleConstraintRequest()
+    #     req.pose = pose
+    #     req.constraint = constraint
 
-        resp = self.sample(req)
+    #     resp = self.sample(req)
 
-        if not resp.success:
-            raise PlanningFailedError("Sampling command failed.")
+    #     if not resp.success:
+    #         raise PlanningFailedError("Sampling command failed.")
 
-        return resp
+    #     return resp
