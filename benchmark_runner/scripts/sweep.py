@@ -134,7 +134,7 @@ if __name__ == "__main__":
         print("Run id: {}".format(run_id))
         pprint.pprint(current_config)
 
-        rospy.set_param("run_id", run_id)
+        rospy.set_param("/benchmark_run_id", run_id)
 
         # load parameters to parameter server
         ptp_config = current_config["ptp_config"]
