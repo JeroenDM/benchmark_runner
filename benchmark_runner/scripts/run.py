@@ -7,6 +7,7 @@ The task is read from the parameter server for now
 """
 import sys
 import json
+import datetime
 
 import rospy
 import rospkg
@@ -69,6 +70,10 @@ if __name__ == "__main__":
 
     group_config = config["groups"][planning_group_name]
     print("Using planning group: {}".format(planning_group_name))
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    run_id = timestamp + "0"
+    rospy.set_param("/benchmark_run_id", run_id)
 
     # load parameters to parameter server
     ptp_config = config["groups"][planning_group_name]["ptp_config"]
