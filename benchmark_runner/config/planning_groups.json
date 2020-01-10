@@ -31,15 +31,10 @@
                 "longest_valid_segment_fraction": 0.001
             },
             "cart_config": {
-                "num_samples": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0,
-                    "rx": 0,
-                    "ry": 0,
-                    "rz": 30
-                },
-                "num_path_points": 10
+                "max_translation": 0.01,
+                "max_rotation": 0.06,
+                "pos_tol_resolution": 0.01,
+                "rot_tol_resolution": 0.1
             }
         }
     }
