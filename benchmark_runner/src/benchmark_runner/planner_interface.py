@@ -30,11 +30,17 @@ def points_to_plan(points):
         pt.velocities = []
         pt.accelerations = []
     plan.joint_trajectory.header.frame_id = "world"
+    if not rospy.has_param("/manipulator/joint_names"):
+        raise Exception("The planner interface needs a parameter \
+        /manipulator/joint_names on the parameter server.")
+
+    plan.joint_trajectory.joint_names = rospy.get_param(
+        "/manipulator/joint_names")
     # plan.joint_trajectory.joint_names = [
     #     "rail_base_to_carrier", "joint_a1", "joint_a2",
-    # "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
-    plan.joint_trajectory.joint_names = [
-        "joint_a1", "joint_a2", "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
+    #     "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
+    # plan.joint_trajectory.joint_names = [
+    #     "joint_a1", "joint_a2", "joint_a3", "joint_a4", "joint_a5", "joint_a6"]
     return plan
 
 

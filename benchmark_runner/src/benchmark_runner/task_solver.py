@@ -1,6 +1,7 @@
 """
 Functions to execute a planning task.
 """
+import copy
 import geometry_msgs.msg
 
 from nexon.interface import Commands, Sections
@@ -39,9 +40,13 @@ def plan_task(psi, task):
     for command in task[Sections.COMMANDS]:
         # what is the inital configuration for the current planning command?
         if len(plans) == 0:
-            start_config = initial_config
+            start_config = copy.copy(initial_config)
         else:
-            start_config = plans[-1].joint_trajectory.points[-1].positions
+            start_config = copy.copy(
+                plans[-1].joint_trajectory.points[-1].positions)
+
+        start_config = list(start_config)
+        # start_config.append(0.0)
 
         ctype = command["type"]
         if ctype == Commands.MOVEJ:
