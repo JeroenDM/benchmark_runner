@@ -159,7 +159,7 @@ def show_task(plotter, task):
     for v in variables:
         print(v, variables[v])
         if is_pose(variables[v]):
-            plotter.plot_axis(create_pose_msg(variables[v]))
+            plotter.plot_named_axis(create_pose_msg(variables[v]), v)
 
 
 if __name__ == "__main__":
