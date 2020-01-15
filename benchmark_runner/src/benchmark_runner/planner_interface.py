@@ -86,6 +86,7 @@ class PlannerInterface:
     @log_motion_command
     def movel(self, start_config, pose_goal):
         req = LINPlanningRequest()
+        req.use_start_config = True
         req.start_config = start_config
         req.pose_goal = pose_goal
         req.has_constraints = False
@@ -102,10 +103,25 @@ class PlannerInterface:
 
         return points_to_plan(resp.joint_path)
 
-    # def sample(self, pose, constraint):
-    #     req = SampleConstraintRequest()
-    #     req.pose = pose
-    #     req.constraint = constraint
+    @log_motion_command
+    def movel_no_start_config(self, pose_start, pose_goal):
+        req = LINPlanningRequest()
+        req.use_start_config = False
+        req.pose_start = pose_start
+        req.pose_goal = pose_goal
+        req.has_constraints = False
+
+        resp = LINPlanningResponse(success=False)
+        try:
+            resp = self.lin(req)
+        except rospy.service.ServiceException as e:
+            print(e)
+        # resp = self.cart_servers.s[0](req)
+
+        if not resp.success:
+            raise PlanningFailedError("Movel command failed.")
+
+        return points_to_plan(resp.joint_path)
 
     #     resp = self.sample(req)
 
