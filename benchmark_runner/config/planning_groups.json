@@ -27,13 +27,29 @@
             "sample_service": "arf_sample_constraint",
             "ptp_config": {
                 "planner_id": "RRTConnect",
+                "planning_time": 20.0,
+                "longest_valid_segment_fraction": 0.001
+            },
+            "cart_config": {
+                "max_translation": 0.01,
+                "max_rotation": 0.06,
+                "pos_tol_resolution": 0.05,
+                "rot_tol_resolution": 0.1
+            }
+        },
+        "group_3": {
+            "ptp_service": "ompl_ptp_planning",
+            "cart_service": "desc_lin_planning",
+            "sample_service": "arf_sample_constraint",
+            "ptp_config": {
+                "planner_id": "RRTConnect",
                 "planning_time": 6.0,
                 "longest_valid_segment_fraction": 0.001
             },
             "cart_config": {
                 "max_translation": 0.01,
                 "max_rotation": 0.06,
-                "pos_tol_resolution": 0.01,
+                "pos_tol_resolution": 0.05,
                 "rot_tol_resolution": 0.1
             }
         }
