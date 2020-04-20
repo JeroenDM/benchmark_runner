@@ -8,6 +8,7 @@ from nexon.interface import Commands, Sections
 from nexon.io import parse_file
 
 from benchmark_runner.planner_interface import PlannerInterface
+from benchmark_runner.exceptions import PlanningFailedError
 
 
 def solve_task(task_file_path, config):
@@ -57,6 +58,54 @@ def plan_task(psi, task):
             plan = psi.movep(
                 start_config, create_pose_msg(var[command["goal"]]))
             plans.append(plan)
+
+        elif ctype == Commands.MOVELIN:
+            plan = psi.movel(
+                start_config, create_pose_msg(var[command["goal"]]))
+            plans.append(plan)
+
+        else:
+            raise Exception(
+                "Unkown command type: {}".format(ctype))
+
+    return plans
+
+
+def plan_task_with_sampling(psi, task):
+    # fixed assumption, the robot starts from home
+    initial_config = task[Sections.VARS]["home"]
+
+    plans = []
+    var = task[Sections.VARS]
+
+    for command in task[Sections.COMMANDS]:
+        # what is the inital configuration for the current planning command?
+        if len(plans) == 0:
+            start_config = copy.copy(initial_config)
+        else:
+            start_config = copy.copy(
+                plans[-1].joint_trajectory.points[-1].positions)
+
+        start_config = list(start_config)
+        # start_config.append(0.0)
+
+        ctype = command["type"]
+        if ctype == Commands.MOVEJ:
+            plan = psi.movej(start_config, var[command["goal"]])
+            plans.append(plan)
+
+        elif ctype == Commands.MOVEP:
+            sample_results = psi.sample_cons(
+                start_config, create_pose_msg(var[command["goal"]]))
+
+            for q in sample_results.joint_poses:
+                try:
+                    plan = psi.movep(
+                        start_config, create_pose_msg(var[command["goal"]]))
+                    plans.append(plan)
+                    break
+                except PlanningFailedError:
+                    pass
 
         elif ctype == Commands.MOVELIN:
             plan = psi.movel(

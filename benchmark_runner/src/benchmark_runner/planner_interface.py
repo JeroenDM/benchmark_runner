@@ -1,6 +1,8 @@
 import rospy
+import math
 import moveit_msgs.msg
 import trajectory_msgs.msg
+import nexon_msgs
 
 from nexon_msgs.srv import PTPPlanning, PTPPlanningRequest
 from nexon_msgs.srv import LINPlanning, LINPlanningRequest, LINPlanningResponse
@@ -105,6 +107,8 @@ class PlannerInterface:
 
     @log_motion_command
     def movel_no_start_config(self, pose_start, pose_goal):
+        print("===========Planning to pose")
+        print(pose_goal)
         req = LINPlanningRequest()
         req.use_start_config = False
         req.pose_start = pose_start
@@ -123,9 +127,17 @@ class PlannerInterface:
 
         return points_to_plan(resp.joint_path)
 
+    # def sample_cons(self, start_config, pose_goal):
+    #     req = SampleConstraintRequest()
+    #     constraint = nexon_msgs.msg.PoseConstraint()
+    #     constraint.relative = True
+    #     constraint.rpy_min = [0, 0, -math.pi]
+    #     constraint.rpy_max = [0, 0, math.pi]
+    #     req.pose = pose_goal
+    #     req.constraint = constraint
     #     resp = self.sample(req)
 
-    #     if not resp.success:
+    #     if len(resp.joint_poses) == 0:
     #         raise PlanningFailedError("Sampling command failed.")
 
     #     return resp
