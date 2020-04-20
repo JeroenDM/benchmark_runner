@@ -8,6 +8,7 @@ import json
 import pprint
 import copy
 import datetime
+import git
 
 import rospy
 import rospkg
@@ -80,6 +81,8 @@ def sweep_generator(config):
 
 
 def log_to_db(db_handle, success, plans, config, run_id):
+    git_repo = git.Repo(search_parent_directories=True)
+    git_sha = git_repo.head.object.hexsha
     db_data = {
         "author": "JeroenDM",
         "log_time": datetime.datetime.utcnow(),
@@ -89,7 +92,8 @@ def log_to_db(db_handle, success, plans, config, run_id):
         "plans": [
             message_converter.convert_ros_message_to_dictionary(plan)
             for plan in plans
-        ]
+        ],
+        "git_commit_sha": git_sha
     }
 
     return db_handle.add_data(db_data)
@@ -107,7 +111,7 @@ if __name__ == "__main__":
     rospack = rospkg.RosPack()
 
     # Open a connection to database for logging
-    DB = LogDB()
+    DB = LogDB(collection="screencast_example")
 
     filepath = rosparam.get_param("/planning_task_path")
 
@@ -148,6 +152,7 @@ if __name__ == "__main__":
             print("PLANNING SUCCES")
             success = True
         except PlanningFailedError:
+            plans = []
             print("PLANNING FAILED")
             success = False
 
