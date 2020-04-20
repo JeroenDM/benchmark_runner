@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="benchmark_runner" pkg="benchmark_runner" type="run.py" args="group_1"/>
+
+</launch>

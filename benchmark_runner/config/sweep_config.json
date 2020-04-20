@@ -1,17 +1,15 @@
 {
     "base_config": {
         "ptp_service": "ompl_ptp_planning",
-        "cart_service": "cart_lin_planning",
+        "cart_service": "ompl_lin_planning",
         "ptp_config": {
             "planner_id": "RRTConnect",
-            "planning_time": 10.0,
+            "planning_time": 5.0,
             "longest_valid_segment_fraction": 0.001
         },
         "cart_config": {
-            "max_translation": 0.01,
-            "max_rotation": 0.06,
-            "pos_tol_resolution": 0.05,
-            "rot_tol_resolution": 0.1
+            "eef_step": 0.01,
+            "jump_threshold": 0.0
         },
         "num_runs": 2
     },
@@ -19,11 +17,12 @@
         "num_repeat_all": 1,
         "ptp_config": {
             "planner_id": [
-                "RRTConnect"
+                "RRTConnect",
+                "PRM"
             ]
         },
         "cart_config": {
-            "max_translation": [
+            "eef_step": [
                 0.01
             ]
         }
