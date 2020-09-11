@@ -13,13 +13,13 @@ This should start rviz and visualize the robot with the tool. In addition there 
 
 Now load the task and the corresponding work object:
 ```bash
-rosrun benchmark_runner publish_task.py setup_1_support l_profile
+rosrun benchmark_runner publish_task.py setup_1 l_profile
 ```
 The `publish_task.py` script takes two arguments, the name of the setup and the name of the task you want to execute. Now you should see a (green) object added in front of the robot in rviz. In addition, the poses defined in the task file are visualized.
 
 You can list the aviablable tasks in a setup.
 ```bash
-rosrun benchmark_runner load.py setup_1_support -l
+rosrun benchmark_runner load.py setup_1 -l
 ```
 
 Before we can execute the task, we need to launch the [planning servers](https://github.com/JeroenDM/benchmark_planning_servers) that solve the subproblems. (In the future this could be added to the above script maybe.)
