@@ -28,6 +28,11 @@ For example start all ompl planning servers:
 rosrun ompl_planning_server server
 ```
 
+Finally we also need to start the MongoDB server to log the results.
+```bash
+sudo systemctl start mongod
+```
+
 Now you can execute the task using a specific group of planners
 ```bash
 rosrun benchmark_runner run.py group_1
