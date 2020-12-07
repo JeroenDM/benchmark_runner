@@ -2,6 +2,12 @@
 
 This package contains scripts to execute a benchmark run for a specific task an planning group.
 
+## Preliminaries
+
+Make sure that mongodb is active in the background.
+```bash
+sudo service mongod start
+```
 
 ## Executing a single task
 
@@ -13,9 +19,9 @@ This should start rviz and visualize the robot with the tool. In addition there 
 
 Now load the task and the corresponding work object:
 ```bash
-rosrun benchmark_runner publish_task.py setup_1_support l_profile
+rosrun benchmark_runner load.py setup_1_support l_profile
 ```
-The `publish_task.py` script takes two arguments, the name of the setup and the name of the task you want to execute. Now you should see a (green) object added in front of the robot in rviz. In addition, the poses defined in the task file are visualized.
+The `load.py` script takes two arguments, the name of the setup and the name of the task you want to execute. Now you should see a (green) object added in front of the robot in rviz. In addition, the poses defined in the task file are visualized.
 
 You can list the aviablable tasks in a setup.
 ```bash
