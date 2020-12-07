@@ -25,13 +25,18 @@ The `load.py` script takes two arguments, the name of the setup and the name of 
 
 You can list the aviablable tasks in a setup.
 ```bash
-rosrun benchmark_runner load.py setup_1_support -l
+rosrun benchmark_runner load.py setup_1 -l
 ```
 
 Before we can execute the task, we need to launch the [planning servers](https://github.com/JeroenDM/benchmark_planning_servers) that solve the subproblems. (In the future this could be added to the above script maybe.)
 For example start all ompl planning servers:
 ```bash
 rosrun ompl_planning_server server
+```
+
+Finally we also need to start the MongoDB server to log the results.
+```bash
+sudo systemctl start mongod
 ```
 
 Now you can execute the task using a specific group of planners
